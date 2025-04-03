@@ -50,39 +50,42 @@
     const apiUrl = "https://sentiment-api-518846670229.europe-west1.run.app/predict";
 
     // Call the real API for prediction
-    async function getSentiment(button) {
-      const row = button.parentElement.parentElement;
-      const tweetText = row.cells[0].innerText.trim();
-      const sentimentCell = row.cells[1];
+async function getSentiment(button) {
+  const row = button.parentElement.parentElement;
+  const tweetText = row.cells[0].innerText.trim();
+  const sentimentCell = row.cells[1];
 
-      sentimentCell.innerText = "Loading...";
-      sentimentCell.className = "sentiment-cell";
+  sentimentCell.innerText = "Loading...";
+  sentimentCell.className = "sentiment-cell";
 
-      try {
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ text: tweetText })
-        });
+  try {
+    const response = await fetch("https://sentiment-api-518846670229.europe-west1.run.app/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: tweetText })
+    });
 
-        if (!response.ok) {
-          throw new Error("HTTP error " + response.status);
-        }
-
-        const result = await response.json();
-        const sentiment = result.label;
-        const prob = result.probability;
-
-        sentimentCell.innerText = sentiment;
-        sentimentCell.classList.add(prob > 0.5 ? "positive" : "negative");
-
-      } catch (error) {
-        sentimentCell.innerText = "Error!";
-        console.error("Error fetching sentiment:", error);
-      }
+    if (!response.ok) {
+      throw new Error("HTTP error " + response.status);
     }
+
+    const result = await response.json();
+
+    // 👇 Vérifie ici le format reçu
+    console.log("Received:", result);
+
+    const sentiment = result.label;
+    const prob = result.probability;
+
+    sentimentCell.innerText = sentiment;
+    sentimentCell.classList.add(prob > 0.5 ? "positive" : "negative");
+
+  } catch (error) {
+    console.error("Error:", error);
+    sentimentCell.innerText = "Error";
+  }
+}
+
 
     // Add new row to the table
     function addRow() {
