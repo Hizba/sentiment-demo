@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sentiment Detection Demo</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    .positive {
+      background-color: #c8f7c5;
+    }
+    .negative {
+      background-color: #f7c5c5;
+    }
+    button {
+      padding: 5px 10px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Tweet Sentiment Analyzer</h2>
+  <table id="tweetTable">
+    <thead>
+      <tr>
+        <th>Tweet</th>
+        <th>Sentiment</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td contenteditable="true">Paste a tweet here...</td>
+        <td class="sentiment-cell"></td>
+        <td><button onclick="getSentiment(this)">Get Sentiment</button></td>
+      </tr>
+    </tbody>
+  </table>
+  <button onclick="addRow()">Add a new line</button>
+
+  <script>
+    const apiUrl = "https://sentiment-api-518846670229.europe-west1.run.app/predict";
+
+    // Call the real API for prediction
+    async function getSentiment(button) {
+      const row = button.parentElement.parentElement;
+      const tweetText = row.cells[0].innerText.trim();
+      const sentimentCell = row.cells[1];
+
+      sentimentCell.innerText = "Loading...";
+      sentimentCell.className = "sentiment-cell";
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ text: tweetText })
+        });
+
+        if (!response.ok) {
+          throw new Error("HTTP error " + response.status);
+        }
+
+        const result = await response.json();
+        const sentiment = result.label;
+        const prob = result.probability;
+
+        sentimentCell.innerText = sentiment;
+        sentimentCell.classList.add(prob > 0.5 ? "positive" : "negative");
+
+      } catch (error) {
+        sentimentCell.innerText = "Error!";
+        console.error("Error fetching sentiment:", error);
+      }
+    }
+
+    // Add new row to the table
+    function addRow() {
+      const table = document.getElementById("tweetTable").getElementsByTagName('tbody')[0];
+      const newRow = table.insertRow();
+      const tweetCell = newRow.insertCell(0);
+      const sentimentCell = newRow.insertCell(1);
+      const actionCell = newRow.insertCell(2);
+
+      tweetCell.contentEditable = "true";
+      tweetCell.innerText = "Paste a tweet here...";
+      sentimentCell.className = "sentiment-cell";
+      actionCell.innerHTML = '<button onclick="getSentiment(this)">Get Sentiment</button>';
+    }
+  </script>
+</body>
+</html>
