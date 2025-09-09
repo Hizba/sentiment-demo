@@ -46,58 +46,57 @@
   </table>
   <button onclick="addRow()">Add a new line</button>
 
-<script>
-  const apiUrl = "https://sentiment-api-111348601629.europe-west1.run.app/predict";
+  <script>
+    const apiUrl = "https://sentiment-api-111348601629.europe-west1.run.app/predict";
 
-  // Fonction pour obtenir le sentiment
-  window.getSentiment = async function(button) {
-    const row = button.parentElement.parentElement;
-    const tweetText = row.cells[0].innerText.trim();
-    const sentimentCell = row.cells[1];
+    // Fonction pour obtenir le sentiment
+    window.getSentiment = async function(button) {
+      const row = button.parentElement.parentElement;
+      const tweetText = row.cells[0].innerText.trim();
+      const sentimentCell = row.cells[1];
 
-    sentimentCell.innerText = "Loading...";
-    sentimentCell.className = "sentiment-cell";
+      sentimentCell.innerText = "Loading...";
+      sentimentCell.className = "sentiment-cell";
 
-    try {
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: tweetText })
-      });
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: tweetText })
+        });
 
-      if (!response.ok) {
-        throw new Error("HTTP error " + response.status);
+        if (!response.ok) {
+          throw new Error("HTTP error " + response.status);
+        }
+
+        const result = await response.json();
+        console.log("Received:", result);
+
+        const sentiment = result.label;
+        const prob = result.probability;
+
+        sentimentCell.innerText = sentiment;
+        sentimentCell.classList.add(prob > 0.5 ? "positive" : "negative");
+
+      } catch (error) {
+        console.error("Error:", error);
+        sentimentCell.innerText = "Error";
       }
-
-      const result = await response.json();
-      console.log("Received:", result);
-
-      const sentiment = result.label;
-      const prob = result.probability;
-
-      sentimentCell.innerText = sentiment;
-      sentimentCell.classList.add(prob > 0.5 ? "positive" : "negative");
-
-    } catch (error) {
-      console.error("Error:", error);
-      sentimentCell.innerText = "Error";
     }
-  }
 
-  // Fonction pour ajouter une nouvelle ligne
-  window.addRow = function() {
-    const table = document.getElementById("tweetTable").getElementsByTagName('tbody')[0];
-    const newRow = table.insertRow();
-    const tweetCell = newRow.insertCell(0);
-    const sentimentCell = newRow.insertCell(1);
-    const actionCell = newRow.insertCell(2);
+    // Fonction pour ajouter une nouvelle ligne
+    window.addRow = function() {
+      const table = document.getElementById("tweetTable").getElementsByTagName('tbody')[0];
+      const newRow = table.insertRow();
+      const tweetCell = newRow.insertCell(0);
+      const sentimentCell = newRow.insertCell(1);
+      const actionCell = newRow.insertCell(2);
 
-    tweetCell.contentEditable = "true";
-    tweetCell.innerText = "Paste a tweet here...";
-    sentimentCell.className = "sentiment-cell";
-    actionCell.innerHTML = '<button onclick="getSentiment(this)">Get Sentiment</button>';
-  }
-</script>
-
+      tweetCell.contentEditable = "true";
+      tweetCell.innerText = "Paste a tweet here...";
+      sentimentCell.className = "sentiment-cell";
+      actionCell.innerHTML = '<button onclick="getSentiment(this)">Get Sentiment</button>';
+    }
+  </script>
 </body>
 </html>
