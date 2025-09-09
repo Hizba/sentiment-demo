@@ -47,7 +47,7 @@
   <button onclick="addRow()">Add a new line</button>
 
   <script>
-    const apiUrl = "https://sentiment-api-518846670229.europe-west1.run.app/predict";
+    const apiUrl = "https://sentiment-api-111348601629.europe-west1.run.app/predict";
 
     // Call the real API for prediction
 async function getSentiment(button) {
@@ -59,7 +59,8 @@ async function getSentiment(button) {
   sentimentCell.className = "sentiment-cell";
 
   try {
-    const response = await fetch("https://sentiment-api-518846670229.europe-west1.run.app/predict", {
+    const response = await fetch("https://sentiment-api-111348601629.europe-west1.run.app/predict", {
+    const response = await fetch("https://sentiment-api-111348601629.europe-west1.run.app/predict", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: tweetText })
