@@ -1,3 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sentiment Detection Demo</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    .positive {
+      background-color: #c8f7c5;
+    }
+    .negative {
+      background-color: #f7c5c5;
+    }
+    button {
+      padding: 5px 10px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Tweet Sentiment Analyzer</h2>
+  <table id="tweetTable">
+    <thead>
+      <tr>
+        <th>Tweet</th>
+        <th>Sentiment</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td contenteditable="true">Paste a tweet here...</td>
+        <td class="sentiment-cell"></td>
+        <td><button onclick="getSentiment(this)">Get Sentiment</button></td>
+      </tr>
+    </tbody>
+  </table>
+  <button onclick="addRow()">Add a new line</button>
+
 <script>
   const apiUrl = "https://sentiment-api-111348601629.europe-west1.run.app/predict";
 
@@ -50,3 +98,6 @@
     actionCell.innerHTML = '<button onclick="getSentiment(this)">Get Sentiment</button>';
   }
 </script>
+
+</body>
+</html>
